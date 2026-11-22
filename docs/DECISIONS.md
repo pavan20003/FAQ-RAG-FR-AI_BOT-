@@ -40,3 +40,4 @@
 - The demo page is served by FastAPI on the same origin as the API, so trying it does not require a permissive CORS rule. Embedding on a different site requires adding that exact origin to the CORS allow-list.
 - The demo and widget offer French and English UI. The widget sends its selected language to `/ask`; French remains the default, and the system prompt and abstention message follow the selected language.
 - The container installs a pinned CPU-only PyTorch wheel because the API runs embeddings on CPU and does not need CUDA packages. The model weights remain in a persistent named volume.
+- The LLM provider is selected explicitly with `LLM_PROVIDER`; Anthropic remains the default for existing setups, while Gemini uses its separate key and explicitly configured model name. Both providers receive the same grounded language-specific prompt and share output limits.

@@ -14,8 +14,9 @@ Edit `.env` and set at least:
 
 ```dotenv
 POSTGRES_PASSWORD=<unique URL-safe password>
-ANTHROPIC_API_KEY=<your key>
-CLAUDE_MODEL=<model available to your account>
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=<your AI Studio key>
+GEMINI_MODEL=<model enabled for your key>
 ADMIN_TOKEN=<long random secret>
 ```
 
@@ -62,7 +63,9 @@ Place the API behind a TLS reverse proxy such as Caddy or Nginx. Restrict access
 | Variable | Purpose |
 |---|---|
 | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` | Compose database identity and password |
-| `ANTHROPIC_API_KEY`, `CLAUDE_MODEL` | Claude answering API |
+| `LLM_PROVIDER` | Select `anthropic` or `gemini` |
+| `ANTHROPIC_API_KEY`, `CLAUDE_MODEL` | Required for the Anthropic provider |
+| `GEMINI_API_KEY`, `GEMINI_MODEL` | Required for the Gemini provider |
 | `ADMIN_TOKEN` | Protects the ingestion endpoint |
 | `CORS_ALLOW_ORIGINS` | Exact browser origins allowed to call the API |
 | `SUPPORT_EMAIL`, `SMTP_HOST`, `SMTP_FROM_ADDRESS` | Support handoff delivery |

@@ -2,9 +2,13 @@ from __future__ import annotations
 
 import contextlib
 from dataclasses import dataclass
+from types import SimpleNamespace
 
+import pytest
+
+from app.config import Settings
 from app.rag.answer import ABSTENTION_MESSAGE, answer_question
-from app.rag.llm import FakeLLM, LLMResponse
+from app.rag.llm import FakeLLM, GeminiLLM, LLMResponse
 from app.rag.retrieve import RetrievedChunk
 
 
@@ -147,3 +151,41 @@ def test_english_answer_uses_english_instructions_and_fake_response():
     assert "Customer question:" in llm.last_user_prompt
     assert result.answer.startswith("According to")
     assert result.sources[0].path == "prices.md"
+
+
+def test_gemini_adapter_uses_prompts_and_returns_usage_without_network(monkeypatch):
+    from google import genai
+
+    captured = {}
+
+    class Models:
+        def generate_content(self, **kwargs):
+            captured.update(kwargs)
+            return SimpleNamespace(
+                text="The baguette costs 1.30 euros [1].",
+                usage_metadata=SimpleNamespace(prompt_token_count=24, candidates_token_count=8),
+            )
+
+    class FakeClient:
+        models = Models()
+
+    monkeypatch.setattr(genai, "Client", lambda **_kwargs: FakeClient())
+    settings = Settings(llm_provider="gemini", gemini_api_key="test-key", gemini_model="test-model")
+    client = GeminiLLM(settings)
+    response = client.generate("English system rule", "Question and passages")
+
+    assert captured["model"] == "test-model"
+    assert captured["contents"] == "Question and passages"
+    assert captured["config"].system_instruction == "English system rule"
+    assert captured["config"].max_output_tokens == settings.claude_max_tokens
+    assert response.text == "The baguette costs 1.30 euros [1]."
+    assert response.input_tokens == 24
+    assert response.output_tokens == 8
+
+
+def test_gemini_provider_requires_its_own_key_and_model():
+    with pytest.raises(RuntimeError, match="GEMINI_API_KEY"):
+        GeminiLLM(Settings(llm_provider="gemini"))
+
+    with pytest.raises(RuntimeError, match="GEMINI_MODEL"):
+        GeminiLLM(Settings(llm_provider="gemini", gemini_api_key="test-key"))

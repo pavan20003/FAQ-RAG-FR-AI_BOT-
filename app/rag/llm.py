@@ -55,6 +55,48 @@ class ClaudeLLM:
         )
 
 
+class GeminiLLM:
+    """Call the Gemini Developer API with bounded output, timeout, and retries."""
+
+    def __init__(self, settings: Settings | None = None) -> None:
+        settings = settings or get_settings()
+        if not settings.gemini_api_key:
+            raise RuntimeError("GEMINI_API_KEY is required when LLM_PROVIDER=gemini")
+        if not settings.gemini_model:
+            raise RuntimeError("GEMINI_MODEL must be set when LLM_PROVIDER=gemini")
+
+        from google import genai
+        from google.genai import types
+
+        self.model = settings.gemini_model
+        self.max_tokens = settings.claude_max_tokens
+        self.types = types
+        self.client = genai.Client(
+            api_key=settings.gemini_api_key,
+            http_options=types.HttpOptions(
+                timeout=int(settings.claude_timeout_seconds * 1000),
+                retry_options=types.HttpRetryOptions(attempts=settings.claude_max_retries + 1),
+            ),
+        )
+
+    def generate(self, system_prompt: str, user_prompt: str) -> LLMResponse:
+        response = self.client.models.generate_content(
+            model=self.model,
+            contents=user_prompt,
+            config=self.types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                max_output_tokens=self.max_tokens,
+                temperature=0.2,
+            ),
+        )
+        usage = response.usage_metadata
+        return LLMResponse(
+            text=response.text or "",
+            input_tokens=getattr(usage, "prompt_token_count", 0) or 0,
+            output_tokens=getattr(usage, "candidates_token_count", 0) or 0,
+        )
+
+
 class FakeLLM:
     """Return a fixed, language-aware answer citing passage IDs in the prompt."""
 
@@ -79,5 +121,12 @@ class FakeLLM:
 
 
 def get_llm(*, fake: bool = False) -> LLMClient:
-    """Create the explicit offline fake or the configured real client."""
-    return FakeLLM() if fake else ClaudeLLM()
+    """Create the offline fake or the configured Anthropic/Gemini client."""
+    if fake:
+        return FakeLLM()
+    provider = get_settings().llm_provider.strip().lower()
+    if provider == "anthropic":
+        return ClaudeLLM()
+    if provider == "gemini":
+        return GeminiLLM()
+    raise ValueError("LLM_PROVIDER must be 'anthropic' or 'gemini'.")
