@@ -47,3 +47,4 @@
 - The README uses Docker Compose as the shortest path to a local demo, then points to separate development and deployment guidance.
 - The bakery corpus is fictional source material indexed at query time; it is not model training data. The combined PDF export lives in `exports/`, outside the directory ingested by default, to avoid indexing a duplicate copy.
 - Gemini setup examples use `gemini-3.5-flash-lite`, which succeeded with the demo API key during local verification. Model availability, quota, and pricing are provider-controlled and can change, so setup guides link to Google's current model and pricing documentation.
+- The answer instructions and abstention text refer to the business described by the retrieved documents, rather than naming the bakery. This lets an isolated database serve another business without inheriting bakery-specific language.

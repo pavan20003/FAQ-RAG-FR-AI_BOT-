@@ -18,11 +18,11 @@ from app.rag.retrieve import RetrievedChunk, relevance_gate, retrieve
 
 ABSTENTION_MESSAGE = (
     "Je ne trouve pas cette information dans les documents disponibles. "
-    "Veuillez contacter la boulangerie afin que son équipe puisse vous aider."
+    "Veuillez contacter l'entreprise concernée afin que son équipe puisse vous aider."
 )
 ENGLISH_ABSTENTION_MESSAGE = (
     "I can't find this information in the available documents. "
-    "Please contact the bakery so the team can help you."
+    "Please contact the business described in the documents so its team can help you."
 )
 MAX_QUESTION_CHARS = 500
 CITATION_RE = re.compile(r"\[(\d+)\]")
