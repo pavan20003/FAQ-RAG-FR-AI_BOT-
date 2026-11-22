@@ -130,3 +130,20 @@ def test_untrusted_passage_is_delimited_and_fake_llm_keeps_its_contract():
     assert "<passage id=\"9\"" not in llm.last_user_prompt
     assert "[1]" in result.answer
     assert [source.path for source in result.sources] == ["prices.md"]
+
+
+def test_english_answer_uses_english_instructions_and_fake_response():
+    llm = FakeLLM()
+    result = answer_question(
+        "What does the baguette cost?",
+        language="en",
+        retriever=lambda *_args, **_kwargs: [_chunk()],
+        gate=lambda *_args, **_kwargs: True,
+        llm=llm,
+        connection=_MemoryConnection(),
+    )
+
+    assert "Always answer in natural, polite English" in llm.last_system_prompt
+    assert "Customer question:" in llm.last_user_prompt
+    assert result.answer.startswith("According to")
+    assert result.sources[0].path == "prices.md"

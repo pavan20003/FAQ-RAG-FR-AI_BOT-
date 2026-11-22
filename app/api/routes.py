@@ -34,7 +34,8 @@ def _connection(request: Request):
 def ask(payload: AskRequest, request: Request) -> AskResponse:
     answerer = request.app.state.answerer or answer_question
     with _connection(request) as connection:
-        result = answerer(payload.question, session_id=payload.session_id, connection=connection)
+        result = answerer(payload.question, session_id=payload.session_id,
+                          language=payload.language, connection=connection)
     return AskResponse(answer=result.answer, sources=[asdict(source) for source in result.sources],
                         abstained=result.abstained, session_id=result.session_id)
 

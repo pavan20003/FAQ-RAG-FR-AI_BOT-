@@ -62,8 +62,8 @@ def _client(tmp_path, *, limit=20):
 
     chunk = RetrievedChunk(1, "La baguette coûte 1,30 euro.", "Tarifs", "prix.md", 1, "Tarifs", 0.8)
 
-    def answerer(question, *, session_id=None, connection=None):
-        return answer_question(question, session_id=session_id, connection=connection, llm=FakeLLM(),
+    def answerer(question, *, session_id=None, language="fr", connection=None):
+        return answer_question(question, session_id=session_id, language=language, connection=connection, llm=FakeLLM(),
                                retriever=lambda *_args, **_kwargs: [chunk], gate=lambda *_args, **_kwargs: True)
 
     settings = Settings(admin_token="secret", outbox_path=str(tmp_path / "outbox.jsonl"), rate_limit_requests=limit)
@@ -85,17 +85,28 @@ def test_ask_returns_grounded_french_answer_and_request_id(tmp_path):
 def test_ask_abstains_without_evidence(tmp_path):
     client, _database = _client(tmp_path)
     client.app.state.answerer = lambda question, **kwargs: answer_question(
-        question, connection=kwargs["connection"], retriever=lambda *_a, **_k: [], gate=lambda *_a, **_k: False
+        question, language=kwargs.get("language", "fr"), connection=kwargs["connection"],
+        retriever=lambda *_a, **_k: [], gate=lambda *_a, **_k: False
     )
-    response = client.post("/ask", json={"question": "Une information inconnue ?"})
+    response = client.post("/ask", json={"question": "An unknown fact?", "language": "en"})
     assert response.status_code == 200
     assert response.json()["abstained"] is True
+    assert response.json()["answer"].startswith("I can't find")
     assert response.json()["sources"] == []
+
+
+def test_ask_returns_answer_in_selected_english_language(tmp_path):
+    client, _database = _client(tmp_path)
+    response = client.post("/ask", json={"question": "What does the baguette cost?", "language": "en"})
+    assert response.status_code == 200
+    assert response.json()["answer"].startswith("According to")
+    assert response.json()["sources"][0]["path"] == "prix.md"
 
 
 def test_validation_rate_limit_admin_auth_and_request_size(tmp_path):
     client, _database = _client(tmp_path, limit=2)
     assert client.post("/ask", json={"question": "  "}).status_code == 422
+    assert client.post("/ask", json={"question": "Hello", "language": "es"}).status_code == 422
     assert client.post("/ingest", json={"folder": "data"}).status_code == 401
     assert client.post("/ingest", json={"folder": "../"}, headers={"X-Admin-Token": "secret"}).status_code == 400
     assert client.post("/ask", content="{}", headers={"Content-Length": "999999"}).status_code == 413

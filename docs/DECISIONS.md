@@ -38,4 +38,5 @@
 
 - The widget uses a Shadow DOM to keep its styles isolated and `textContent` for all API-provided text. Source links resolve through the API's demo-data route; a production corpus should replace these with stable public URLs.
 - The demo page is served by FastAPI on the same origin as the API, so trying it does not require a permissive CORS rule. Embedding on a different site requires adding that exact origin to the CORS allow-list.
+- The demo and widget offer French and English UI. The widget sends its selected language to `/ask`; French remains the default, and the system prompt and abstention message follow the selected language.
 - The container installs a pinned CPU-only PyTorch wheel because the API runs embeddings on CPU and does not need CUDA packages. The model weights remain in a persistent named volume.

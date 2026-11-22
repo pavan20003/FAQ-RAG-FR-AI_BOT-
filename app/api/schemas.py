@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 import unicodedata
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
@@ -20,6 +22,7 @@ class AskRequest(BaseModel):
 
     question: str
     session_id: str | None = Field(default=None, max_length=128)
+    language: Literal["fr", "en"] = "fr"
 
     @field_validator("question", mode="before")
     @classmethod

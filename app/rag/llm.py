@@ -56,7 +56,7 @@ class ClaudeLLM:
 
 
 class FakeLLM:
-    """Return a fixed French answer citing the passage IDs in the prompt."""
+    """Return a fixed, language-aware answer citing passage IDs in the prompt."""
 
     def __init__(self) -> None:
         self.calls = 0
@@ -69,8 +69,12 @@ class FakeLLM:
         self.last_user_prompt = user_prompt
         passage_ids = re.findall(r'<passage\s+id="(\d+)"', user_prompt)
         citations = " ".join(f"[{passage_id}]" for passage_id in passage_ids)
+        english = "Always answer in natural, polite English" in system_prompt
         if not citations:
-            return LLMResponse("Je ne trouve pas cette information dans les passages disponibles.")
+            text = "I can't find this information in the available passages." if english else "Je ne trouve pas cette information dans les passages disponibles."
+            return LLMResponse(text)
+        if english:
+            return LLMResponse(f"According to the available information, see passage {citations}.")
         return LLMResponse(f"D'après les informations disponibles, consultez le passage {citations}.")
 
 

@@ -13,12 +13,16 @@ from psycopg.types.json import Jsonb
 
 from app.config import get_settings
 from app.rag.llm import LLMClient, LLMResponse, get_llm
-from app.rag.prompt import FRENCH_SYSTEM_PROMPT, build_user_prompt
+from app.rag.prompt import ENGLISH_SYSTEM_PROMPT, FRENCH_SYSTEM_PROMPT, build_user_prompt
 from app.rag.retrieve import RetrievedChunk, relevance_gate, retrieve
 
 ABSTENTION_MESSAGE = (
     "Je ne trouve pas cette information dans les documents disponibles. "
     "Veuillez contacter la boulangerie afin que son équipe puisse vous aider."
+)
+ENGLISH_ABSTENTION_MESSAGE = (
+    "I can't find this information in the available documents. "
+    "Please contact the bakery so the team can help you."
 )
 MAX_QUESTION_CHARS = 500
 CITATION_RE = re.compile(r"\[(\d+)\]")
@@ -147,6 +151,7 @@ def answer_question(
     session_id: str | None = None,
     llm: LLMClient | None = None,
     fake_llm: bool = False,
+    language: str = "fr",
     retriever=retrieve,
     gate=relevance_gate,
     connection=None,
@@ -154,6 +159,8 @@ def answer_question(
     """Answer from retrieved evidence, or abstain before making any LLM call."""
     started = time.perf_counter()
     cleaned_question = validate_question(question)
+    if language not in {"fr", "en"}:
+        raise ValueError("La langue doit être fr ou en.")
     session_id = session_id or str(uuid.uuid4())
 
     chunks = retriever(cleaned_question, mode="hybrid", connection=connection)
@@ -166,7 +173,7 @@ def answer_question(
         min_term_coverage=settings.retrieval_min_term_coverage,
     ):
         answer = AnswerResult(
-            answer=ABSTENTION_MESSAGE,
+            answer=ENGLISH_ABSTENTION_MESSAGE if language == "en" else ABSTENTION_MESSAGE,
             sources=[],
             abstained=True,
             session_id=session_id,
@@ -178,8 +185,8 @@ def answer_question(
     if llm is None:
         llm = get_llm(fake=fake_llm)
     response: LLMResponse = llm.generate(
-        FRENCH_SYSTEM_PROMPT,
-        build_user_prompt(cleaned_question, chunks),
+        ENGLISH_SYSTEM_PROMPT if language == "en" else FRENCH_SYSTEM_PROMPT,
+        build_user_prompt(cleaned_question, chunks, language=language),
     )
     answer_text, citation_numbers = sanitize_citations(response.text, len(chunks))
     answer = AnswerResult(
@@ -199,8 +206,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Answer a French FAQ question using local retrieval")
     parser.add_argument("question", help="question to answer")
     parser.add_argument("--fake-llm", action="store_true", help="use the deterministic offline FakeLLM")
+    parser.add_argument("--language", choices=("fr", "en"), default="fr")
     args = parser.parse_args()
-    result = answer_question(args.question, fake_llm=args.fake_llm)
+    result = answer_question(args.question, fake_llm=args.fake_llm, language=args.language)
     print(json.dumps(asdict(result), ensure_ascii=False, indent=2))
 
 
