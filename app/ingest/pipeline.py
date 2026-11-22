@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Protocol
 
@@ -77,8 +77,13 @@ def ingest_directory(
                 document = load_document(path, source=source)
                 chunks = []
                 for loaded_page in document.pages:
+                    page_chunks = chunk_text(
+                        loaded_page.text, title=document.title, page=loaded_page.page
+                    )
+                    index_offset = len(chunks)
                     chunks.extend(
-                        chunk_text(loaded_page.text, title=document.title, page=loaded_page.page)
+                        replace(chunk, chunk_index=index_offset + index)
+                        for index, chunk in enumerate(page_chunks)
                     )
                 vectors = encoder.encode([chunk.text for chunk in chunks], kind="passage")
                 if len(vectors) != len(chunks):
