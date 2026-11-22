@@ -26,6 +26,7 @@ class RetrievedChunk:
     heading: str
     source: str
     page: int | None
+    title: str = ""
     vector_rank: int | None = None
     vector_score: float | None = None
     keyword_rank: int | None = None
@@ -71,6 +72,7 @@ def _rows_to_vector_results(rows: list[dict]) -> list[RetrievedChunk]:
             heading=row["heading"],
             source=row["source"],
             page=row["page"],
+            title=row["title"],
             vector_rank=rank,
             vector_score=float(row["vector_score"]),
         )
@@ -90,7 +92,7 @@ def vector_search(
         return []
     embedding = _query_embedding(query.strip(), encoder)
     sql = (
-        "SELECT c.id AS chunk_id, c.text, c.heading, d.source, c.page, "
+        "SELECT c.id AS chunk_id, c.text, c.heading, d.source, d.title, c.page, "
         "1 - (c.embedding <=> %s::vector) AS vector_score "
         "FROM chunks AS c JOIN documents AS d ON d.id = c.document_id "
         "ORDER BY c.embedding <=> %s::vector, c.id LIMIT %s"
@@ -120,7 +122,7 @@ def keyword_search(
         return []
     sql = (
         "WITH search AS (SELECT websearch_to_tsquery('french', %s) AS tsquery) "
-        "SELECT c.id AS chunk_id, c.text, c.heading, d.source, c.page, "
+        "SELECT c.id AS chunk_id, c.text, c.heading, d.source, d.title, c.page, "
         "ts_rank_cd(c.tsv, search.tsquery) AS keyword_score "
         "FROM chunks AS c JOIN documents AS d ON d.id = c.document_id CROSS JOIN search "
         "WHERE c.tsv @@ search.tsquery "
@@ -135,6 +137,7 @@ def keyword_search(
             heading=row["heading"],
             source=row["source"],
             page=row["page"],
+            title=row["title"],
             keyword_rank=rank,
             keyword_score=float(row["keyword_score"]),
         )
@@ -183,6 +186,7 @@ def retrieve(
                     heading=result.heading,
                     source=result.source,
                     page=result.page,
+                    title=result.title,
                     vector_rank=result.vector_rank,
                     vector_score=result.vector_score,
                     keyword_rank=result.keyword_rank,
@@ -196,6 +200,7 @@ def retrieve(
                     heading=previous.heading,
                     source=previous.source,
                     page=previous.page,
+                    title=previous.title,
                     vector_rank=result.vector_rank if score_name == "vector_score" else previous.vector_rank,
                     vector_score=result.vector_score if score_name == "vector_score" else previous.vector_score,
                     keyword_rank=result.keyword_rank if score_name == "keyword_score" else previous.keyword_rank,

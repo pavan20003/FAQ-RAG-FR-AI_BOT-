@@ -19,3 +19,10 @@
 - Keyword search splits a user's plain-text query into word tokens and joins them with `OR` before passing them to PostgreSQL's French `websearch_to_tsquery`. This avoids interpreting user input as raw `tsquery` syntax while allowing a match on any useful term.
 - Hybrid retrieval fuses up to 20 vector and 20 keyword candidates with reciprocal rank fusion using `k=60`, then returns the five highest-scoring results.
 - The relevance gate accepts a result that clears the vector similarity floor or one that clears the keyword rank floor and covers enough non-stopword query terms. These defaults are tunable in environment settings and will be evaluated in Phase 6.
+
+## Phase 4
+
+- The LLM is created only after retrieval passes the relevance gate, so an abstention works without an API key and never calls Claude.
+- Retrieved text and attributes are escaped inside numbered passage tags. The system prompt treats these passages as untrusted data and tells the model to ignore instructions found inside them.
+- The server removes citations that do not point to one of the retrieved passages and builds source metadata from those passages, never from generated text.
+- A request logs both the user question and the assistant response with source metadata, abstention status, latency, and the session's conversation ID.

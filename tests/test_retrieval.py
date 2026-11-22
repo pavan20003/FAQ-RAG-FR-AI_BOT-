@@ -9,6 +9,8 @@ from pgvector.psycopg import register_vector
 from psycopg.rows import dict_row
 
 from app.rag.retrieve import RetrievedChunk, keyword_search, relevance_gate, retrieve, vector_search
+from app.rag.answer import answer_question
+from app.rag.llm import FakeLLM
 
 
 class FakeEncoder:
@@ -40,6 +42,17 @@ def fixture_db():
         "id BIGSERIAL PRIMARY KEY, document_id BIGINT NOT NULL REFERENCES documents(id) ON DELETE CASCADE, "
         "chunk_index INTEGER NOT NULL, heading TEXT NOT NULL, text TEXT NOT NULL, embedding vector(2) NOT NULL, "
         "tsv tsvector GENERATED ALWAYS AS (to_tsvector('french', text)) STORED, page INTEGER NULL)"
+    )
+    connection.execute(
+        "CREATE TABLE conversations ("
+        "id BIGSERIAL PRIMARY KEY, session_id TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now())"
+    )
+    connection.execute(
+        "CREATE TABLE messages ("
+        "id BIGSERIAL PRIMARY KEY, conversation_id BIGINT NOT NULL REFERENCES conversations(id), "
+        "role TEXT NOT NULL, content TEXT NOT NULL, sources JSONB NOT NULL DEFAULT '[]'::jsonb, "
+        "abstained BOOLEAN NOT NULL DEFAULT FALSE, latency_ms INTEGER NOT NULL DEFAULT 0, "
+        "created_at TIMESTAMPTZ NOT NULL DEFAULT now())"
     )
     register_vector(connection)
     documents = []
@@ -127,3 +140,25 @@ def test_relevance_gate_uses_vector_or_keyword_with_term_coverage():
     assert not relevance_gate([weak_keyword], "Quel est le prix du croissant ?", keyword_threshold=0.1, min_term_coverage=0.6)
     assert relevance_gate([strong_keyword], "Quel est le prix du croissant ?", keyword_threshold=0.1, min_term_coverage=0.4)
     assert not relevance_gate([], "Quel est le prix ?")
+
+
+def test_answer_flow_logs_question_and_assistant_sources(fixture_db):
+    llm = FakeLLM()
+    result = answer_question(
+        "Quel est le prix de la baguette ?",
+        session_id="answer-fixture",
+        retriever=lambda query, mode, connection: retrieve(
+            query, mode=mode, connection=connection, encoder=FakeEncoder()
+        ),
+        llm=llm,
+        connection=fixture_db,
+    )
+
+    messages = fixture_db.execute(
+        "SELECT role, content, sources, abstained FROM messages ORDER BY id"
+    ).fetchall()
+    assert result.abstained is False
+    assert llm.calls == 1
+    assert [message["role"] for message in messages] == ["user", "assistant"]
+    assert messages[1]["sources"]
+    assert messages[1]["abstained"] is False

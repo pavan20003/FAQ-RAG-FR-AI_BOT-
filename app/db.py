@@ -8,15 +8,19 @@ from psycopg.rows import dict_row
 from app.config import get_settings
 
 
-def connect() -> psycopg.Connection:
-    """Open a database connection and register pgvector values."""
-    connection = psycopg.connect(get_settings().database_url, row_factory=dict_row)
+def connect(*, autocommit: bool = False) -> psycopg.Connection:
+    """Open a database connection using dict rows."""
+    connection = psycopg.connect(
+        get_settings().database_url,
+        row_factory=dict_row,
+        autocommit=autocommit,
+    )
     return connection
 
 
 def get_connection() -> Iterator[psycopg.Connection]:
     """FastAPI dependency that closes its connection after the request."""
-    connection = connect()
+    connection = connect(autocommit=True)
     try:
         yield connection
     finally:

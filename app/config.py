@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     retrieval_min_term_coverage: float = 0.25
     anthropic_api_key: str | None = None
     claude_model: str | None = None
+    claude_max_tokens: int = 700
+    claude_timeout_seconds: float = 30.0
+    claude_max_retries: int = 2
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", env_ignore_empty=True, extra="ignore"
