@@ -27,13 +27,9 @@ def resolve_embedding_dim(model_name: str, configured_dim: int | None = None) ->
     """Get vector width from the embedding model, with a test-only override."""
     if configured_dim is not None:
         return configured_dim
-    from sentence_transformers import SentenceTransformer
+    from app.ingest.embed import get_embedding_dimension
 
-    model = SentenceTransformer(model_name)
-    dimension = model.get_sentence_embedding_dimension()
-    if dimension is None:
-        raise RuntimeError(f"Could not determine embedding dimension for {model_name}")
-    return dimension
+    return get_embedding_dimension(model_name)
 
 
 def init_db() -> None:
