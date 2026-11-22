@@ -41,3 +41,9 @@
 - The demo and widget offer French and English UI. The widget sends its selected language to `/ask`; French remains the default, and the system prompt and abstention message follow the selected language.
 - The container installs a pinned CPU-only PyTorch wheel because the API runs embeddings on CPU and does not need CUDA packages. The model weights remain in a persistent named volume.
 - The LLM provider is selected explicitly with `LLM_PROVIDER`; Anthropic remains the default for existing setups, while Gemini uses its separate key and explicitly configured model name. Both providers receive the same grounded language-specific prompt and share output limits.
+
+## Phase 8
+
+- The README uses Docker Compose as the shortest path to a local demo, then points to separate development and deployment guidance.
+- The bakery corpus is fictional source material indexed at query time; it is not model training data. The combined PDF export lives in `exports/`, outside the directory ingested by default, to avoid indexing a duplicate copy.
+- Gemini setup examples use `gemini-3.5-flash-lite`, which succeeded with the demo API key during local verification. Model availability, quota, and pricing are provider-controlled and can change, so setup guides link to Google's current model and pricing documentation.

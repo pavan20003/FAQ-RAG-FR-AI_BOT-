@@ -10,15 +10,17 @@ Install Docker Engine and the Docker Compose plugin, clone this repository, and 
 cp .env.example .env
 ```
 
-Edit `.env` and set at least:
+Edit `.env` and set the database password, one model provider, and the admin token. For Gemini:
 
 ```dotenv
 POSTGRES_PASSWORD=<unique URL-safe password>
 LLM_PROVIDER=gemini
 GEMINI_API_KEY=<your AI Studio key>
-GEMINI_MODEL=<model enabled for your key>
+GEMINI_MODEL=gemini-3.5-flash-lite
 ADMIN_TOKEN=<long random secret>
 ```
+
+The Gemini model above is a tested example for this project, not a permanent availability guarantee. Use a model enabled for your key and check Google's [model list](https://ai.google.dev/gemini-api/docs/models) and [pricing and free-tier terms](https://ai.google.dev/gemini-api/docs/pricing). Quotas and availability can change. For Anthropic, set `LLM_PROVIDER=anthropic`, `ANTHROPIC_API_KEY`, and `CLAUDE_MODEL` instead.
 
 Generate URL-safe secrets with `openssl rand -hex 32`. Do not commit `.env`. Set `SUPPORT_EMAIL`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, and `SMTP_FROM_ADDRESS` to enable email handoff. Without SMTP settings, handoff messages are written to the app container's local outbox; configure persistent storage or SMTP before relying on that fallback in production.
 
@@ -44,6 +46,14 @@ curl http://localhost:8000/ask \
 ```
 
 The app initializes its schema at startup. Re-run the ingestion command after changing source documents.
+
+If the widget reports that the assistant cannot be reached, check the app logs and confirm that the API key, provider, and model name are valid:
+
+```sh
+docker compose logs --tail=100 app
+```
+
+Provider rate limits or temporary model outages can also interrupt answers. Do not paste API keys into logs, issue reports, or chat messages.
 
 ## 3. Publish the widget
 
