@@ -26,45 +26,89 @@
   const shadow = host.attachShadow({ mode: "open" });
   const style = document.createElement("style");
   style.textContent = `
-    :host { --faq-primary: ${color}; color: #241d19; font: 15px/1.45 system-ui, sans-serif; }
+    :host { --faq-primary: ${color}; --faq-ink: #252b25; --faq-muted: #697168; --faq-line: #e5e0d6; color: var(--faq-ink); font: 14px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     * { box-sizing: border-box; }
-    .launcher { position: fixed; right: 22px; bottom: 22px; z-index: 2147483000; border: 0; border-radius: 999px; background: var(--faq-primary); color: white; padding: 14px 20px; font: inherit; font-weight: 650; cursor: pointer; box-shadow: 0 5px 22px #0003; }
-    .panel { position: fixed; right: 22px; bottom: 82px; z-index: 2147483000; display: none; flex-direction: column; width: min(390px, calc(100vw - 28px)); height: min(590px, calc(100vh - 120px)); overflow: hidden; border: 1px solid #e5d9d2; border-radius: 16px; background: #fffdfb; box-shadow: 0 12px 40px #0003; }
-    .panel.open { display: flex; }
-    header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; color: white; background: var(--faq-primary); font-weight: 700; }
-    header select { max-width: 112px; border: 1px solid #ffffff88; border-radius: 8px; padding: 6px 8px; color: #241d19; background: #fff; font: inherit; font-size: 13px; }
-    button { font: inherit; cursor: pointer; }
-    .close { border: 0; color: white; background: transparent; font-size: 22px; line-height: 1; }
-    .messages { display: flex; flex: 1; flex-direction: column; gap: 10px; overflow-y: auto; padding: 14px; }
-    .message { max-width: 90%; padding: 10px 12px; border-radius: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
-    .assistant { align-self: flex-start; background: #f3ece7; }
-    .user { align-self: flex-end; color: white; background: var(--faq-primary); }
-    .sources { margin: -4px 0 4px 4px; padding-left: 18px; color: #51443d; font-size: 13px; }
-    .sources a { color: #76391f; }
-    .composer { display: flex; gap: 8px; border-top: 1px solid #eadfd9; padding: 12px; }
-    input, textarea { width: 100%; min-width: 0; border: 1px solid #d5c9c2; border-radius: 9px; padding: 10px; font: inherit; }
-    .composer input { flex: 1; }
-    .send, .handoff-submit { border: 0; border-radius: 9px; padding: 9px 13px; color: white; background: var(--faq-primary); font-weight: 650; }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid #d8ac69; outline-offset: 2px; }
+    .launcher { position: fixed; right: 26px; bottom: 24px; z-index: 2147483000; display: inline-flex; align-items: center; gap: 11px; min-height: 54px; border: 1px solid #ffffff44; border-radius: 15px; padding: 0 20px 0 14px; color: #fff; background: var(--faq-primary); font: inherit; font-size: 13px; font-weight: 750; box-shadow: 0 10px 28px #1b2d2350; transition: transform .18s ease, box-shadow .18s ease, background .18s ease; }
+    .launcher::before { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 9px; content: "✳"; color: var(--faq-primary); background: #f3ead9; font-size: 15px; }
+    .launcher:hover { transform: translateY(-2px); background: #273a2e; box-shadow: 0 13px 32px #1b2d235c; }
+    .panel { position: fixed; right: 26px; bottom: 91px; z-index: 2147483000; display: none; flex-direction: column; width: min(410px, calc(100vw - 30px)); height: min(640px, calc(100vh - 120px)); overflow: hidden; border: 1px solid #ffffff; border-radius: 20px; background: #faf9f5; box-shadow: 0 22px 70px #1b2d2340, 0 3px 12px #1b2d231a; }
+    .panel.open { display: flex; animation: rise-in .2s ease-out both; }
+    @keyframes rise-in { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .chat-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 79px; padding: 13px 16px; color: #fff; background: var(--faq-primary); }
+    .identity { min-width: 0; display: flex; align-items: center; gap: 11px; }
+    .avatar { width: 42px; height: 42px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid #ffffff40; border-radius: 13px; color: #26392d; background: #f1e5cd; font-size: 21px; }
+    .heading { display: block; max-width: 180px; overflow: hidden; font-size: 13px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+    .availability { display: flex; align-items: center; gap: 6px; margin-top: 4px; color: #dfe9df; font-size: 10px; font-weight: 550; }
+    .availability::before { width: 6px; height: 6px; border-radius: 50%; content: ""; background: #a9d39b; box-shadow: 0 0 0 3px #a9d39b25; }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .header-actions select { max-width: 95px; min-height: 34px; border: 1px solid #ffffff55; border-radius: 8px; padding: 0 5px; color: #fff; background: #ffffff16; font-size: 11px; }
+    .header-actions option { color: #252b25; background: #fff; }
+    .close { width: 32px; height: 32px; border: 1px solid #ffffff3d; border-radius: 9px; color: white; background: transparent; font-size: 21px; line-height: 1; transition: background .18s ease; }
+    .close:hover { background: #ffffff20; }
+    .messages { display: flex; flex: 1; flex-direction: column; gap: 11px; overflow-y: auto; padding: 18px 15px; background: linear-gradient(#faf9f5, #f8f7f2); }
+    .message { max-width: 88%; padding: 11px 13px; border-radius: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .assistant { align-self: flex-start; border: 1px solid #ebe7de; border-bottom-left-radius: 5px; color: #343b34; background: #fff; box-shadow: 0 2px 5px #19251a08; }
+    .user { align-self: flex-end; border-bottom-right-radius: 5px; color: white; background: var(--faq-primary); box-shadow: 0 4px 10px #233c2b1c; }
+    .sources { margin: -3px 0 5px 2px; padding-left: 18px; color: var(--faq-muted); font-size: 11px; }
+    .sources a { color: var(--faq-primary); font-weight: 650; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    .composer { display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--faq-line); padding: 12px; background: #fff; }
+    input, textarea { width: 100%; min-width: 0; border: 1px solid #deded5; border-radius: 10px; padding: 10px 12px; color: var(--faq-ink); background: #fbfbf8; font: inherit; }
+    input::placeholder, textarea::placeholder { color: #858b82; }
+    .composer input { min-height: 43px; flex: 1; }
+    .send, .handoff-submit { min-height: 42px; border: 0; border-radius: 10px; padding: 0 14px; color: white; background: var(--faq-primary); font-weight: 700; transition: background .18s ease; }
+    .send:hover, .handoff-submit:hover { background: #273a2e; }
     .send:disabled, .handoff-submit:disabled { opacity: .55; cursor: wait; }
-    .handoff { margin: 0 12px 12px; padding: 12px; border: 1px solid #eadfd9; border-radius: 12px; background: #fff; }
+    .handoff { margin: 0 12px 12px; padding: 13px; border: 1px solid var(--faq-line); border-radius: 13px; background: #fff; }
     .handoff[hidden] { display: none; }
-    .handoff label { display: block; margin: 7px 0 4px; font-size: 13px; }
+    .handoff p { margin: 0 0 8px; color: #505950; font-size: 12px; }
+    .handoff label { display: block; margin: 8px 0 4px; color: #4c554c; font-size: 11px; font-weight: 700; }
     .handoff textarea { min-height: 70px; resize: vertical; }
-    .handoff-submit { margin-top: 8px; }
-    .status { min-height: 20px; margin: 0; padding: 0 12px 8px; color: #5d514b; font-size: 13px; }
-    @media (max-width: 480px) { .launcher { right: 14px; bottom: 14px; } .panel { right: 8px; bottom: 72px; height: min(620px, calc(100vh - 92px)); width: calc(100vw - 16px); } }
+    .handoff-submit { margin-top: 9px; }
+    .status { min-height: 19px; margin: 0; padding: 0 14px 7px; color: var(--faq-muted); background: #fff; font-size: 11px; }
+    @media (max-width: 480px) {
+      .launcher { right: 15px; bottom: 15px; min-height: 50px; }
+      .panel { right: 8px; bottom: 76px; width: calc(100vw - 16px); height: min(660px, calc(100dvh - 88px)); border-radius: 17px; }
+      .chat-header { min-height: 72px; padding: 11px 12px; }
+      .avatar { width: 38px; height: 38px; }
+      .header-actions { gap: 6px; }
+      .header-actions select { max-width: 84px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .panel.open { animation: none; } *, *::before, *::after { transition-duration: .01ms !important; } }
   `;
   const launcher = document.createElement("button");
   launcher.className = "launcher";
   launcher.type = "button";
   launcher.textContent = copy[language].launcher;
   launcher.setAttribute("aria-label", `Ouvrir ${title}`);
+  launcher.setAttribute("aria-controls", "faq-rag-chat-panel");
+  launcher.setAttribute("aria-expanded", "false");
   const panel = document.createElement("section");
   panel.className = "panel";
+  panel.id = "faq-rag-chat-panel";
   panel.setAttribute("aria-label", title);
+  panel.setAttribute("role", "dialog");
   const header = document.createElement("header");
+  header.className = "chat-header";
+  const identity = document.createElement("div");
+  identity.className = "identity";
+  const avatar = document.createElement("span");
+  avatar.className = "avatar";
+  avatar.setAttribute("aria-hidden", "true");
+  avatar.textContent = "✳";
+  const headerCopy = document.createElement("div");
   const heading = document.createElement("span");
+  heading.className = "heading";
   heading.textContent = title;
+  const availability = document.createElement("span");
+  availability.className = "availability";
+  availability.textContent = language === "en" ? "Here to help" : "À votre écoute";
+  headerCopy.append(heading, availability);
+  identity.append(avatar, headerCopy);
+  const headerActions = document.createElement("div");
+  headerActions.className = "header-actions";
   const languageSelect = document.createElement("select");
   languageSelect.setAttribute("aria-label", copy[language].language);
   for (const [value, label] of [["fr", "Français"], ["en", "English"]]) {
@@ -79,7 +123,8 @@
   close.type = "button";
   close.textContent = "×";
   close.setAttribute("aria-label", copy[language].close);
-  header.append(heading, languageSelect, close);
+  headerActions.append(languageSelect, close);
+  header.append(identity, headerActions);
   const messages = document.createElement("div");
   messages.className = "messages";
   messages.setAttribute("aria-live", "polite");
@@ -142,6 +187,7 @@
     launcher.textContent = text.launcher;
     launcher.setAttribute("aria-label", `${language === "en" ? "Open" : "Ouvrir"} ${title}`);
     close.setAttribute("aria-label", text.close);
+    availability.textContent = language === "en" ? "Here to help" : "À votre écoute";
     welcome.textContent = text.welcome;
     questionInput.placeholder = text.placeholder;
     questionInput.setAttribute("aria-label", text.question);
@@ -183,11 +229,27 @@
     messages.scrollTop = messages.scrollHeight;
   }
 
-  launcher.addEventListener("click", () => {
+  function openPanel() {
     panel.classList.add("open");
+    launcher.setAttribute("aria-expanded", "true");
     questionInput.focus();
+  }
+  function closePanel() {
+    panel.classList.remove("open");
+    launcher.setAttribute("aria-expanded", "false");
+    launcher.focus();
+  }
+  launcher.addEventListener("click", openPanel);
+  close.addEventListener("click", closePanel);
+  window.addEventListener("faq-rag-open", openPanel);
+  window.addEventListener("faq-rag-suggestion", event => {
+    if (typeof event.detail !== "string" || !event.detail.trim()) return;
+    questionInput.value = event.detail;
+    openPanel();
   });
-  close.addEventListener("click", () => panel.classList.remove("open"));
+  panel.addEventListener("keydown", event => {
+    if (event.key === "Escape") closePanel();
+  });
   languageSelect.addEventListener("change", () => setLanguage(languageSelect.value, true));
   window.addEventListener("faq-rag-language", event => {
     if (event.detail === "en" || event.detail === "fr") setLanguage(event.detail);
