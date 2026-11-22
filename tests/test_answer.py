@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 from app.rag.answer import ABSTENTION_MESSAGE, answer_question
 from app.rag.llm import FakeLLM, LLMResponse
-from app.rag.prompt import FRENCH_SYSTEM_PROMPT
 from app.rag.retrieve import RetrievedChunk
 
 

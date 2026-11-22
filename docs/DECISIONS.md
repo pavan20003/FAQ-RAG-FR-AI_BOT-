@@ -33,3 +33,9 @@
 - Recall@5 is the mean fraction of a question's gold source-heading pairs found in the first five results. MRR uses the rank of the first matching pair. Mean retrieval latency includes local query embedding and database search time.
 - Gate thresholds are tuned for balanced accuracy on the first 25 questions only, then frozen for the last 25. The in-memory API gate stays dependency-free; tuning results belong in `.env.example` defaults only after the real evaluation has run.
 - The optional faithfulness CSV is deliberately ungraded: a human fills in the support column after reviewing cited answers.
+
+## Phase 7
+
+- The widget uses a Shadow DOM to keep its styles isolated and `textContent` for all API-provided text. Source links resolve through the API's demo-data route; a production corpus should replace these with stable public URLs.
+- The demo page is served by FastAPI on the same origin as the API, so trying it does not require a permissive CORS rule. Embedding on a different site requires adding that exact origin to the CORS allow-list.
+- The container installs a pinned CPU-only PyTorch wheel because the API runs embeddings on CPU and does not need CUDA packages. The model weights remain in a persistent named volume.

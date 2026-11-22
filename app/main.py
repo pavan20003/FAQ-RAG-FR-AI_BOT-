@@ -11,7 +11,8 @@ from typing import Callable
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api.routes import router
 from app.api.security import RateLimiter, request_id_from_header
@@ -86,6 +87,13 @@ def create_app(*, settings: Settings | None = None, initialize_database: bool = 
                 "client_ip": request.client.host if request.client else None}})
 
     app.include_router(router)
+
+    app.mount("/widget", StaticFiles(directory=app.state.project_root / "widget"), name="widget-assets")
+    app.mount("/demo-data", StaticFiles(directory=app.state.project_root / "data" / "demo_site"), name="demo-data")
+
+    @app.get("/demo", include_in_schema=False)
+    def demo_page() -> FileResponse:
+        return FileResponse(app.state.project_root / "widget" / "demo.html")
 
     @app.get("/health")
     def health() -> dict[str, str]:

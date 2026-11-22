@@ -8,7 +8,6 @@ from fastapi.testclient import TestClient
 
 from app.api.security import RateLimiter
 from app.config import Settings
-from app.handoff import send_handoff
 from app.main import create_app
 from app.rag.answer import answer_question
 from app.rag.llm import FakeLLM
