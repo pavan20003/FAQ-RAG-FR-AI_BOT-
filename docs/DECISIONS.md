@@ -26,3 +26,10 @@
 - Retrieved text and attributes are escaped inside numbered passage tags. The system prompt treats these passages as untrusted data and tells the model to ignore instructions found inside them.
 - The server removes citations that do not point to one of the retrieved passages and builds source metadata from those passages, never from generated text.
 - A request logs both the user question and the assistant response with source metadata, abstention status, latency, and the session's conversation ID.
+
+## Phase 6
+
+- The 50 evaluation questions use stable `(source, heading)` labels so re-ingestion can change database IDs without invalidating the gold set. The question order is shuffled with seed 42 and stratified before saving: each half has 20 answerable and 5 unanswerable questions.
+- Recall@5 is the mean fraction of a question's gold source-heading pairs found in the first five results. MRR uses the rank of the first matching pair. Mean retrieval latency includes local query embedding and database search time.
+- Gate thresholds are tuned for balanced accuracy on the first 25 questions only, then frozen for the last 25. The in-memory API gate stays dependency-free; tuning results belong in `.env.example` defaults only after the real evaluation has run.
+- The optional faithfulness CSV is deliberately ungraded: a human fills in the support column after reviewing cited answers.

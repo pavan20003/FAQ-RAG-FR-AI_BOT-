@@ -1,0 +1,626 @@
+[
+  {
+    "id": "q01",
+    "question": "Combien de places de stationnement privées sont réservées aux clients ?",
+    "answerable": false,
+    "category": "unanswerable",
+    "gold": [],
+    "split": "tune"
+  },
+  {
+    "id": "q02",
+    "question": "À quelle heure ferme la boutique le dimanche ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "hours.md",
+        "heading": "Horaires"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q03",
+    "question": "Quel est le montant minimum pour une livraison ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "delivery.md",
+        "heading": "Livraison"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q04",
+    "question": "Avez-vous une application mobile à télécharger ?",
+    "answerable": false,
+    "category": "unanswerable",
+    "gold": [],
+    "split": "tune"
+  },
+  {
+    "id": "q05",
+    "question": "Quels sont les horaires du samedi et du dimanche ?",
+    "answerable": true,
+    "category": "multi_passage",
+    "gold": [
+      {
+        "source": "hours.md",
+        "heading": "Horaires"
+      },
+      {
+        "source": "index.md",
+        "heading": "Bienvenue chez Les Trois Épis"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q06",
+    "question": "Quelle est la date de naissance du boulanger ?",
+    "answerable": false,
+    "category": "unanswerable",
+    "gold": [],
+    "split": "tune"
+  },
+  {
+    "id": "q07",
+    "question": "Comment faire une réclamation et quel est le délai prévu ?",
+    "answerable": true,
+    "category": "multi_passage",
+    "gold": [
+      {
+        "source": "returns.md",
+        "heading": "Réclamations et retours"
+      },
+      {
+        "source": "contact.md",
+        "heading": "Contact"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q08",
+    "question": "Y a-t-il un arrêt de tram proche et l'entrée est-elle accessible de plain-pied ?",
+    "answerable": true,
+    "category": "paraphrase",
+    "gold": [
+      {
+        "source": "access.md",
+        "heading": "Accès"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q09",
+    "question": "Combien coûte votre pain au chocolat au tarif actuel ?",
+    "answerable": true,
+    "category": "superseded",
+    "gold": [
+      {
+        "source": "products/pain-au-chocolat.md",
+        "heading": "Pain au chocolat"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q10",
+    "question": "Pouvez-vous garantir l'absence totale de contamination croisée ?",
+    "answerable": false,
+    "category": "unanswerable",
+    "gold": [],
+    "split": "tune"
+  },
+  {
+    "id": "q11",
+    "question": "Combien de temps avant faut-il réserver un gâteau personnalisé ?",
+    "answerable": true,
+    "category": "paraphrase",
+    "gold": [
+      {
+        "source": "cakes.md",
+        "heading": "Gâteaux et commandes personnalisées"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q12",
+    "question": "La baguette tradition contient-elle du gluten ?",
+    "answerable": true,
+    "category": "accents_typos",
+    "gold": [
+      {
+        "source": "products/baguette.md",
+        "heading": "Baguette tradition"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q13",
+    "question": "Est-ce que vous livrez le dimanche ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "delivery.md",
+        "heading": "Livraison"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q14",
+    "question": "Combien coûte une carte cadeau et quelles sommes puis-je choisir ?",
+    "answerable": true,
+    "category": "multi_passage",
+    "gold": [
+      {
+        "source": "gift-cards.md",
+        "heading": "Cartes cadeaux"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q15",
+    "question": "Quels allergènes trouve-t-on dans le croissant et dans la baguette ?",
+    "answerable": true,
+    "category": "multi_passage",
+    "gold": [
+      {
+        "source": "allergens.md",
+        "heading": "Allergènes"
+      },
+      {
+        "source": "products/baguette.md",
+        "heading": "Baguette tradition"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q16",
+    "question": "Je peux faire livrer une commande à Chamalières, et à quel tarif ?",
+    "answerable": true,
+    "category": "paraphrase",
+    "gold": [
+      {
+        "source": "delivery_zones.md",
+        "heading": "Zones et frais de livraison"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q17",
+    "question": "Quels moyens de paiement acceptez-vous ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "payment.md",
+        "heading": "Moyens de paiement"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q18",
+    "question": "Est-ce que vous êtes ouverts le lundi ?",
+    "answerable": true,
+    "category": "paraphrase",
+    "gold": [
+      {
+        "source": "faq.md",
+        "heading": "Questions fréquentes"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q19",
+    "question": "Quel est le tarif du pain complet de 500 g ?",
+    "answerable": true,
+    "category": "table_lookup",
+    "gold": [
+      {
+        "source": "breads.md",
+        "heading": "Pains"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q20",
+    "question": "Peut-on congeler le pain et comment le conserver ?",
+    "answerable": true,
+    "category": "paraphrase",
+    "gold": [
+      {
+        "source": "storage.md",
+        "heading": "Conservation du pain"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q21",
+    "question": "Quel est le prix du cookie et contient-il des noisettes ?",
+    "answerable": true,
+    "category": "multi_passage",
+    "gold": [
+      {
+        "source": "pastries.md",
+        "heading": "Petites douceurs"
+      },
+      {
+        "source": "allergens.md",
+        "heading": "Allergènes"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q22",
+    "question": "La livraison à Clermont-Ferrand coûte combien et est-elle gratuite à partir d'un montant ?",
+    "answerable": true,
+    "category": "multi_passage",
+    "gold": [
+      {
+        "source": "delivery.md",
+        "heading": "Livraison"
+      },
+      {
+        "source": "delivery_zones.md",
+        "heading": "Zones et frais de livraison"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q23",
+    "question": "Proposez-vous un service de livraison par drone ?",
+    "answerable": false,
+    "category": "unanswerable",
+    "gold": [],
+    "split": "tune"
+  },
+  {
+    "id": "q24",
+    "question": "Quel est le prix d'une brioche nature de 400 g ?",
+    "answerable": true,
+    "category": "table_lookup",
+    "gold": [
+      {
+        "source": "viennoiseries.md",
+        "heading": "Viennoiseries"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q25",
+    "question": "Quel est le tarif d'un atelier de pain et combien de personnes peuvent participer ?",
+    "answerable": true,
+    "category": "multi_passage",
+    "gold": [
+      {
+        "source": "events.md",
+        "heading": "Ateliers"
+      }
+    ],
+    "split": "tune"
+  },
+  {
+    "id": "q26",
+    "question": "À quelle adresse se trouve la boulangerie ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "contact.md",
+        "heading": "Contact"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q27",
+    "question": "Où livrez-vous à Aubière et Royat, et pour quel prix ?",
+    "answerable": true,
+    "category": "multi_passage",
+    "gold": [
+      {
+        "source": "delivery_zones.md",
+        "heading": "Zones et frais de livraison"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q28",
+    "question": "Combien de temps les cartes cadeaux restent-elles valables ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "gift-cards.md",
+        "heading": "Cartes cadeaux"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q29",
+    "question": "Quel est le prix de la baguette tradition ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "breads.md",
+        "heading": "Pains"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q30",
+    "question": "Quels allergènes sont présents dans le cookie chocolat-noisette ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "allergens.md",
+        "heading": "Allergènes"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q31",
+    "question": "Quel est le prix de la tarte aux pommes pour six personnes ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "prices.md",
+        "heading": "Tarifs"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q32",
+    "question": "Combien coûte la fougasse aux olives ?",
+    "answerable": true,
+    "category": "table_lookup",
+    "gold": [
+      {
+        "source": "products/fougasse.md",
+        "heading": "Fougasse aux olives"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q33",
+    "question": "Quel est le prix et le poids du pain de campagne ?",
+    "answerable": true,
+    "category": "multi_passage",
+    "gold": [
+      {
+        "source": "breads.md",
+        "heading": "Pains"
+      },
+      {
+        "source": "prices.md",
+        "heading": "Tarifs"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q34",
+    "question": "Les viennoiseries contiennent-elles des produits laitiers ?",
+    "answerable": true,
+    "category": "paraphrase",
+    "gold": [
+      {
+        "source": "viennoiseries.md",
+        "heading": "Viennoiseries"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q35",
+    "question": "Quels sont les prix des galettes en quatre et six parts ?",
+    "answerable": true,
+    "category": "table_lookup",
+    "gold": [
+      {
+        "source": "seasonal.md",
+        "heading": "Produits de saison"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q36",
+    "question": "Quelle marque de caisse enregistreuse utilisez-vous ?",
+    "answerable": false,
+    "category": "unanswerable",
+    "gold": [],
+    "split": "report"
+  },
+  {
+    "id": "q37",
+    "question": "Combien coûte la fougasse aux olives par piece ?",
+    "answerable": true,
+    "category": "accents_typos",
+    "gold": [
+      {
+        "source": "breads.md",
+        "heading": "Pains"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q38",
+    "question": "Quel est maintenant le délai pour signaler un problème après achat ?",
+    "answerable": true,
+    "category": "superseded",
+    "gold": [
+      {
+        "source": "returns.md",
+        "heading": "Réclamations et retours"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q39",
+    "question": "Avez-vous du pain de seigle et quel est son prix ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "breads.md",
+        "heading": "Pains"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q40",
+    "question": "Jusqu'à quelle heure puis-je téléphoner pour réserver du pain pour demain ?",
+    "answerable": true,
+    "category": "paraphrase",
+    "gold": [
+      {
+        "source": "ordering.md",
+        "heading": "Commander"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q41",
+    "question": "À quelle heure ouvrez-vous le samedi ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "hours.md",
+        "heading": "Horaires"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q42",
+    "question": "Quel numéro appeler pour joindre la boutique ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "contact.md",
+        "heading": "Contact"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q43",
+    "question": "Quelle farine utilisez-vous et d'où vient-elle ?",
+    "answerable": true,
+    "category": "paraphrase",
+    "gold": [
+      {
+        "source": "sourcing.md",
+        "heading": "Approvisionnement"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q44",
+    "question": "Est-ce qu'un retrait en boutique est payant ?",
+    "answerable": true,
+    "category": "paraphrase",
+    "gold": [
+      {
+        "source": "pickup.md",
+        "heading": "Retrait en boutique"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q45",
+    "question": "C'est quoi les horraires du mercredi ?",
+    "answerable": true,
+    "category": "accents_typos",
+    "gold": [
+      {
+        "source": "hours.md",
+        "heading": "Horaires"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q46",
+    "question": "Avez-vous une connexion Wi-Fi gratuite pour les clients ?",
+    "answerable": false,
+    "category": "unanswerable",
+    "gold": [],
+    "split": "report"
+  },
+  {
+    "id": "q47",
+    "question": "Vendez-vous des billets pour un concert ce soir ?",
+    "answerable": false,
+    "category": "unanswerable",
+    "gold": [],
+    "split": "report"
+  },
+  {
+    "id": "q48",
+    "question": "Quel est le mot de passe du Wi-Fi de la boutique ?",
+    "answerable": false,
+    "category": "unanswerable",
+    "gold": [],
+    "split": "report"
+  },
+  {
+    "id": "q49",
+    "question": "Combien coûte un croissant pur beurre ?",
+    "answerable": true,
+    "category": "exact",
+    "gold": [
+      {
+        "source": "prices.md",
+        "heading": "Tarifs"
+      }
+    ],
+    "split": "report"
+  },
+  {
+    "id": "q50",
+    "question": "Quel est votre chiffre d'affaires annuel ?",
+    "answerable": false,
+    "category": "unanswerable",
+    "gold": [],
+    "split": "report"
+  }
+]

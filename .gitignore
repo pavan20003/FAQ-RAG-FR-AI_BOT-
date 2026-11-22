@@ -12,5 +12,6 @@ build/
 data/caches/
 data/model-cache/
 data/outbox/
+eval/faithfulness_review.csv
 models/
 *.log

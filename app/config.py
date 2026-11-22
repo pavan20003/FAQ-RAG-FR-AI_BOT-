@@ -10,9 +10,9 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://faqrag:faqrag@localhost:5432/faqrag"
     embedding_model: str = "BAAI/bge-m3"
     embedding_dim: int | None = None
-    retrieval_vector_threshold: float = 0.3
-    retrieval_keyword_threshold: float = 0.01
-    retrieval_min_term_coverage: float = 0.25
+    retrieval_vector_threshold: float = 0.5
+    retrieval_keyword_threshold: float = 0.1
+    retrieval_min_term_coverage: float = 0.65
     anthropic_api_key: str | None = None
     claude_model: str | None = None
     claude_max_tokens: int = 700
