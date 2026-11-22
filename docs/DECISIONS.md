@@ -13,3 +13,9 @@
 - Headings are parsed from Markdown heading syntax. PDF page text is split page by page, so citations can retain one-based page numbers.
 - Ingestion computes local embeddings before replacing database rows, then commits changed documents and removed files together in one database transaction.
 - HTML is parsed with Beautiful Soup's built-in HTML parser. Navigation, footer, scripts, styles, and noscript elements are removed before text extraction.
+
+## Phase 3
+
+- Keyword search splits a user's plain-text query into word tokens and joins them with `OR` before passing them to PostgreSQL's French `websearch_to_tsquery`. This avoids interpreting user input as raw `tsquery` syntax while allowing a match on any useful term.
+- Hybrid retrieval fuses up to 20 vector and 20 keyword candidates with reciprocal rank fusion using `k=60`, then returns the five highest-scoring results.
+- The relevance gate accepts a result that clears the vector similarity floor or one that clears the keyword rank floor and covers enough non-stopword query terms. These defaults are tunable in environment settings and will be evaluated in Phase 6.

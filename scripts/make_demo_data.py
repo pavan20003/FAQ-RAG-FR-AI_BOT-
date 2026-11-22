@@ -204,7 +204,7 @@ def _write_pdf_fallback(path: Path, title: str, version: str, lines: list[str]) 
     path.write_bytes(output)
 
 
-def generate() -> None:
+def generate(root: Path = ROOT) -> None:
     by_key = fact_map()
     if len(by_key) != len(FACTS):
         raise ValueError("Fact keys must be unique")
@@ -217,11 +217,12 @@ def generate() -> None:
         missing = set(fact.sources) - known_sources
         if missing:
             raise ValueError(f"Unknown source paths for {fact.key}: {sorted(missing)}")
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    source_root = ROOT / "data"
+    data_dir = root / "data" / "demo_site"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    source_root = root / "data"
     source_root.mkdir(parents=True, exist_ok=True)
     for relative, title, intro, keys in PAGES:
-        destination = DATA_DIR / relative
+        destination = data_dir / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         lines = [f"# {title}", "", intro, "", *[f"- {by_key[key].statement}" for key in keys], ""]
         destination.write_text("\n".join(lines), encoding="utf-8")
@@ -231,7 +232,7 @@ def generate() -> None:
         for key, statement, source in SUPERSEDED:
             if source == filename:
                 lines.append(statement)
-        path = DATA_DIR / filename
+        path = data_dir / filename
         try:
             _write_pdf_reportlab(path, title, version, lines)
         except ImportError:
@@ -258,7 +259,7 @@ def generate() -> None:
         current_sources = sorted(page_sources[key] - {source})
         fact_rows.append(f"| `{key}` | {older_statement} | `demo_site/{source}` | {', '.join(f'`demo_site/{current}`' for current in current_sources)} |")
     (source_root / "FACTS.md").write_text("\n".join(fact_rows) + "\n", encoding="utf-8")
-    print(f"Generated {len(PAGES)} pages, {len(PDFS)} PDFs and {len(FACTS)} current facts in {DATA_DIR}")
+    print(f"Generated {len(PAGES)} pages, {len(PDFS)} PDFs and {len(FACTS)} current facts in {data_dir}")
 
 
 def verify() -> None:
